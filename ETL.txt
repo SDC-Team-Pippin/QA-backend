@@ -1,0 +1,66 @@
+ELT - sdc
+
+First step create secure database with password and correct user access
+
+Load schema.sql file into db
+-"\i schema.sql"
+- Drop tables if they exist
+- add main tables
+    - Products
+        \copy products
+        from [ file path ]
+        with delimiter ','
+        csv header;
+    - Related
+        \copy related_temp
+        from [ file path ]
+        with delimiter ','
+        csv header;
+    - Features
+        \copy features
+        from [ file path ]
+        with delimiter ','
+        csv header;
+    - Styles
+        \copy styles
+        from [ file path ]
+        with delimiter ','
+        csv header;
+    - Skus
+        \copy skus
+        from [ file path ]
+        with delimiter ','
+        csv header;
+    - Photos
+        \copy photos
+        from [ file path ]
+        with delimiter ','
+        csv header;
+- Add temp tables without key constraints
+    - Prodcuts_temp
+    - related_temp
+    - features_temp
+    - styles_temp
+    - skus_temp
+    - photos_temp
+
+COPY TO TEMPORARY TABLES
+'/Users/willmcculloch/documents/hr-repos/SDC-pipperoni/sdc-product-data/styles.csv'
+'/Users/willmcculloch/documents/hr-repos/SDC-pipperoni/sdc-product-data/photos.csv'
+'/Users/willmcculloch/documents/hr-repos/SDC-pipperoni/sdc-product-data/skus.csv'
+
+Copy from csv
+\COPY [ table_name]
+FROM [ FILE_PATH to csv]
+WITH DELIMITER ‘ , ’
+CSV
+HEADER;
+
+Do any data transformations inside the temporary table
+
+Move transformed data from temporary table to main table
+INSERT INTO main_table_name
+SELECT * FROM temp_table
+
+Drop temporary tables
+  -"\i drop-temp.sql"

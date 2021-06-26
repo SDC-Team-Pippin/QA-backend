@@ -1,0 +1,35 @@
+{
+  "name": "project-atelier-products",
+  "version": "1.0.0",
+  "description": "product module db and api",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest",
+    "start": "nodemon app.js"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SDC-Team-Pippin/project-atelier-products.git"
+  },
+  "author": "Will McCulloch",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SDC-Team-Pippin/project-atelier-products/issues"
+  },
+  "homepage": "https://github.com/SDC-Team-Pippin/project-atelier-products#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7",
+    "pg": "^8.6.0",
+    "sequelize": "^6.6.2"
+  },
+  "devDependencies": {
+    "jest": "^27.0.5"
+  }
+}
