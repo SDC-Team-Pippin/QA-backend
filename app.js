@@ -47,13 +47,25 @@ const getStyles = (req, res) => {
   let test = Number(req.params.product_id);
 
   //styles with sku data
-  client.query(` select style_id, name, sale_price, original_price, default_style, size, quantity from styles inner join skus on skus.styles_id = styles.style_id where product_id = ${test}`)
-  // client.query(`select style_id, name, sale_price, original_price, default_style from styles where product_id = ${test}`)
+  client.query('select s.style_id, s.name, s.sale_price, s.original_price, s.default_style as default, (select json_agg(skus) as skus from skus where s.style_id = skus.styles_id),  (select json_agg(p) as photos from (select photos.thumbnail_url, photos.url from photos where photos.style_id = s.style_id) as p) from styles as s where product_id = 1;')
+  // client.query('select string_agg(sku_id || \',\' || skus, \',\') s from (select id as sku_id, row_to_json(skus) as skus from skus where styles_id = 1) as sku')
     .then((products) => {
       let styles = products.rows;
-      console.log(styles);
-      // client.query(`select thumbnail_url, url from styles where product_id = ${test}`)
-      res.end();
+
+      for (var i = 0; i < styles.length; i++) {
+        let skus = styles[i].skus;
+        let skuNew = {};
+
+        for (var j = 0; j < skus.length; j++) {
+          skuNew[skus[j].id] = {
+            size: skus[j].size,
+            quantity: skus[j].quantity
+          };
+        }
+        skus = skuNew;
+        styles[i].skus = skuNew;
+      }
+      res.status(200).json(styles);
     })
     .catch((err) => {
       console.log(err);
