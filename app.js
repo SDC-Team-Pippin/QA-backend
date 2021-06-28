@@ -29,7 +29,7 @@ const getOne = (req, res) => {
   // client.query(`select * from products left join features on id = product_id where id = ${req.params.product_id}`)
   client.query(`SELECT * FROM products WHERE id = ${req.params.product_id}`)
     .then((product) => {
-      client.query(`SELECT * FROM features WHERE product_id = ${req.params.product_id}`)
+      client.query(`SELECT feature, value FROM features WHERE product_id = ${req.params.product_id}`)
         .then((features) => {
           // console.log(result.rows);
           // console.log(test.rows);
