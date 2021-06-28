@@ -12,13 +12,17 @@ app.get('/', (req, res) => {
 });
 
 const getAll = (req, res) => {
-  client.query('SELECT * FROM products where id < 6', (err, result) => {
+  let page = req.query.page;
+  let count = req.query.count;
+  console.log('page', page);
+  console.log('count', count);
+  client.query(`SELECT * FROM products where id <= ${count}`, (err, result) => {
     if (err) {
       throw err;
     }
     //change product_id to id
     let test = result.rows;
-    console.log(test);
+    // console.log(test);
     res.status(200).json(test);
   });
 };
