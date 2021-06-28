@@ -12,29 +12,24 @@ app.get('/', (req, res) => {
 });
 
 const getAll = (req, res) => {
-  client.query('SELECT * FROM products where id < 6', (err, result) => {
+  let page = req.query.page;
+  let count = req.query.count;
+  client.query(`SELECT * FROM products where id <= ${count}`, (err, result) => {
     if (err) {
       throw err;
     }
     //change product_id to id
     let test = result.rows;
-    console.log(test);
     res.status(200).json(test);
   });
 };
-//how to deal with pages and count
 
 const getOne = (req, res) => {
-  // console.log(req.params.product_id);
-  // client.query(`select * from products left join features on id = product_id where id = ${req.params.product_id}`)
   client.query(`SELECT * FROM products WHERE id = ${req.params.product_id}`)
     .then((product) => {
-      client.query(`SELECT * FROM features WHERE product_id = ${req.params.product_id}`)
+      client.query(`SELECT feature, value FROM features WHERE product_id = ${req.params.product_id}`)
         .then((features) => {
-          // console.log(result.rows);
-          // console.log(test.rows);
           product.rows[0].features = features.rows;
-          // console.log(result.rows[0]);
           res.status(200).json(product.rows[0]);
         })
         .catch((err) => { throw err; });
@@ -47,13 +42,24 @@ const getStyles = (req, res) => {
   let test = Number(req.params.product_id);
 
   //styles with sku data
-  client.query(` select style_id, name, sale_price, original_price, default_style, size, quantity from styles inner join skus on skus.styles_id = styles.style_id where product_id = ${test}`)
-  // client.query(`select style_id, name, sale_price, original_price, default_style from styles where product_id = ${test}`)
+  client.query('select s.style_id, s.name, s.sale_price, s.original_price, s.default_style as default, (select json_agg(skus) as skus from skus where s.style_id = skus.styles_id),  (select json_agg(p) as photos from (select photos.thumbnail_url, photos.url from photos where photos.style_id = s.style_id) as p) from styles as s where product_id = 1;')
     .then((products) => {
       let styles = products.rows;
-      console.log(styles);
-      // client.query(`select thumbnail_url, url from styles where product_id = ${test}`)
-      res.end();
+
+      for (var i = 0; i < styles.length; i++) {
+        let skus = styles[i].skus;
+        let skuNew = {};
+
+        for (var j = 0; j < skus.length; j++) {
+          skuNew[skus[j].id] = {
+            size: skus[j].size,
+            quantity: skus[j].quantity
+          };
+        }
+        skus = skuNew;
+        styles[i].skus = skuNew;
+      }
+      res.status(200).json(styles);
     })
     .catch((err) => {
       console.log(err);
