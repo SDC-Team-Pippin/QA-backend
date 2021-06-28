@@ -14,31 +14,22 @@ app.get('/', (req, res) => {
 const getAll = (req, res) => {
   let page = req.query.page;
   let count = req.query.count;
-  console.log('page', page);
-  console.log('count', count);
   client.query(`SELECT * FROM products where id <= ${count}`, (err, result) => {
     if (err) {
       throw err;
     }
     //change product_id to id
     let test = result.rows;
-    // console.log(test);
     res.status(200).json(test);
   });
 };
-//how to deal with pages and count
 
 const getOne = (req, res) => {
-  // console.log(req.params.product_id);
-  // client.query(`select * from products left join features on id = product_id where id = ${req.params.product_id}`)
   client.query(`SELECT * FROM products WHERE id = ${req.params.product_id}`)
     .then((product) => {
       client.query(`SELECT feature, value FROM features WHERE product_id = ${req.params.product_id}`)
         .then((features) => {
-          // console.log(result.rows);
-          // console.log(test.rows);
           product.rows[0].features = features.rows;
-          // console.log(result.rows[0]);
           res.status(200).json(product.rows[0]);
         })
         .catch((err) => { throw err; });
@@ -52,7 +43,6 @@ const getStyles = (req, res) => {
 
   //styles with sku data
   client.query('select s.style_id, s.name, s.sale_price, s.original_price, s.default_style as default, (select json_agg(skus) as skus from skus where s.style_id = skus.styles_id),  (select json_agg(p) as photos from (select photos.thumbnail_url, photos.url from photos where photos.style_id = s.style_id) as p) from styles as s where product_id = 1;')
-  // client.query('select string_agg(sku_id || \',\' || skus, \',\') s from (select id as sku_id, row_to_json(skus) as skus from skus where styles_id = 1) as sku')
     .then((products) => {
       let styles = products.rows;
 
