@@ -57,8 +57,8 @@ CREATE TABLE styles (
 CREATE TABLE photos (
   id INT GENERATED ALWAYS AS IDENTITY,
   style_id INT,
-  thumbnail_url VARCHAR,
   url VARCHAR,
+  thumbnail_url VARCHAR,
   PRIMARY KEY(id),
   FOREIGN KEY (style_id) REFERENCES styles(style_id)
 );
