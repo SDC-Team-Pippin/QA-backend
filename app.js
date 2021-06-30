@@ -39,22 +39,26 @@ const getOne = (req, res) => {
 
 //NEED TO FINISH
 const getStyles = (req, res) => {
-  let test = Number(req.params.product_id);
+  let id = Number(req.params.product_id);
+  console.log(id);
 
   //styles with sku data
-  client.query('select s.style_id, s.name, s.sale_price, s.original_price, s.default_style as default, (select json_agg(skus) as skus from skus where s.style_id = skus.styles_id),  (select json_agg(p) as photos from (select photos.thumbnail_url, photos.url from photos where photos.style_id = s.style_id) as p) from styles as s where product_id = 1;')
+  client.query(`select s.style_id, s.name, s.sale_price, s.original_price, s.default_style as default, (select json_agg(skus) as skus from skus where s.style_id = skus.styles_id), (select json_agg(p) as photos from (select photos.thumbnail_url, photos.url from photos where photos.style_id = s.style_id) as p) from styles as s where product_id = ${id};`)
     .then((products) => {
       let styles = products.rows;
+      console.log(styles);
 
       for (var i = 0; i < styles.length; i++) {
         let skus = styles[i].skus;
         let skuNew = {};
 
-        for (var j = 0; j < skus.length; j++) {
-          skuNew[skus[j].id] = {
-            size: skus[j].size,
-            quantity: skus[j].quantity
-          };
+        if (skus) {
+          for (var j = 0; j < skus.length; j++) {
+            skuNew[skus[j].id] = {
+              size: skus[j].size,
+              quantity: skus[j].quantity
+            };
+          }
         }
         skus = skuNew;
         styles[i].skus = skuNew;
