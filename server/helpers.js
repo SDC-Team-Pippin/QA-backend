@@ -1,15 +1,4 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
-const client = require('./db/index.js');
-const port = 3000;
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-app.get('/', (req, res) => {
-  res.send('hi');
-});
+const client = require('../db/index.js');
 
 const getAll = (req, res) => {
   let page = req.query.page;
@@ -37,7 +26,6 @@ const getOne = (req, res) => {
     .catch((err) => { throw err; });
 };
 
-//NEED TO FINISH
 const getStyles = (req, res) => {
   let id = Number(req.params.product_id);
 
@@ -81,13 +69,9 @@ const getRelated = (req, res) => {
     .catch((err) => { throw err; });
 };
 
-//routes
-app.get('/products', getAll);
-app.get('/products/:product_id', getOne);
-app.get('/products/:product_id/styles', getStyles);
-app.get('/products/:product_id/related', getRelated);
-
-
-app.listen(port, () => {
-  console.log(`listening on port ${port}`);
-});
+module.exports = {
+  getAll,
+  getOne,
+  getStyles,
+  getRelated
+};
