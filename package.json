@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "start": "nodemon server/app.js",
-    "start:prod": "node app.js"
+    "start:prod": "node server/app.js"
   },
   "jest": {
     "testEnvironment": "node",
