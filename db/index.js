@@ -1,5 +1,5 @@
 //create connection to db
-const { clientConfig } = require('../config.js');
+const { clientConfig } = require('../config/config.js');
 const { Client } = require('pg');
 
 const client = new Client(clientConfig);
